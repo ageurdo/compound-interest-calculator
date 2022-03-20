@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Slider, InputNumber, Row, Col } from 'antd';
 
 type Props = {
     PV: number,
