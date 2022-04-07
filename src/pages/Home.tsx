@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { Slider, InputNumber, Row, Col } from 'antd';
 
 type Props = {
     PV: number,
     i: number,
     n: number,
-    PMT : number,
+    PMT: number,
 };
 
 export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
@@ -16,11 +16,13 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
     // n = number of months of application
     // i = fixed rate % (per month)
     // PV = present value
-
-    const { register, handleSubmit, watch, formState: { errors } } = useForm<Props>();
+    
+    const { register, handleSubmit, watch, control, setValue, formState: { errors } } = useForm<Props>();
     const [fv, setFv] = useState('');
     const [totalInvested, setTotalInvested] = useState('');
     const [totalInterest, setTotalInterest] = useState('');
+    const [object, setObject] = useState([{}])
+    const [inputValue, setInputValue] = useState(0);
     
     const currency = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
@@ -31,19 +33,29 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
         FV(data);
     }
 
-    function FV({ PMT , i, n, PV }: Props) {
+    function FV({ PMT, i, n, PV }: Props) {
 
         let tax = i / 100; //convert to percentage
-        
-        let FV = ((PV * (Math.pow(1 + tax, n)))) + ((PMT  * (Math.pow(1 + tax, n) - 1)) / tax);
-        let totalInvested = (n*PMT) + +PV;
+
+        let FV = ((PV * (Math.pow(1 + tax, n)))) + ((PMT * (Math.pow(1 + tax, n) - 1)) / tax);
+        let totalInvested = (n * PMT) + +PV;
         setTotalInterest(() => currency.format(+FV - +totalInvested));
-        
+
         setTotalInvested(currency.format(totalInvested));
         setFv(currency.format(FV));
 
         return;
     }
+
+    function formatter(value) {
+        return `${currency.format(value)}`;
+    }
+    
+    const getChangeHandlerWithEvent = (name: any, value: any) => {
+        setValue(name, value);
+        setInputValue(() => value);
+        console.log({event})
+      };
 
 
     return (
@@ -53,14 +65,41 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
 
                     <div style={{ flexDirection: 'row' }}>
-                        <input
+                        {/* <input
                             type="text" {...register("PV")}
                             style={{ width: '200px' }}
                             placeholder='PV inicial'
-                        />
+                        /> */}
+
+                        <Row>
+                            <Col span={12}>
+                                <Slider
+                                    min={1000}
+                                    max={1000000}
+                                    onChange={ (e) => getChangeHandlerWithEvent("PV", e)}
+                                    value={typeof inputValue === 'number' ? inputValue : 0}
+                                    tipFormatter={formatter}
+                                    step={100}
+                                label="teste"
+                                    />
+                            </Col>
+                            <Col span={4}>
+                                <InputNumber
+                                label="teste"
+                                    min={1}
+                                    max={1000000}
+                                    style={{ margin: '0 16px' }}
+                                    value={inputValue}
+                                    onChange={ (e) => getChangeHandlerWithEvent("PV", e)}
+                                    formatter={formatter}
+                                    style={{width: 132}}
+                                />
+                            </Col>
+                        </Row>
+
 
                         <input
-                            type="text" {...register("i", {required: true})}
+                            type="text" {...register("i", { required: true })}
                             style={{ width: '200px' }}
                             placeholder='Taxa de juros'
                         />
@@ -75,7 +114,7 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
                         />
 
                         <input
-                            type="Quantidade de meses" {...register("n", {required: true})}
+                            type="Quantidade de meses" {...register("n", { required: true })}
                             style={{ width: '200px' }}
                             placeholder='Quantidade de meses'
                         />
