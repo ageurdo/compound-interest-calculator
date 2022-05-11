@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { Slider, InputNumber, Row, Col } from 'antd';
+import { SliderWithInput } from '../components/SliderWithInput';
 
 type Props = {
     PV: number,
@@ -16,18 +17,21 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
     // n = number of months of application
     // i = fixed rate % (per month)
     // PV = present value
-    
+
     const { register, handleSubmit, watch, control, setValue, formState: { errors } } = useForm<Props>();
     const [fv, setFv] = useState('');
     const [totalInvested, setTotalInvested] = useState('');
     const [totalInterest, setTotalInterest] = useState('');
     const [object, setObject] = useState([{}])
     const [inputValue, setInputValue] = useState(0);
-    
-    const currency = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-    });
+
+    const currency = new Intl.NumberFormat(
+        'pt-BR',
+        {
+            style: 'currency',
+            currency: 'BRL',
+        }
+    );
 
     const onSubmit: SubmitHandler<Props> = (data) => {
         FV(data);
@@ -36,26 +40,26 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
     function FV({ PMT, i, n, PV }: Props) {
 
         let tax = i / 100; //convert to percentage
-
         let FV = ((PV * (Math.pow(1 + tax, n)))) + ((PMT * (Math.pow(1 + tax, n) - 1)) / tax);
         let totalInvested = (n * PMT) + +PV;
-        setTotalInterest(() => currency.format(+FV - +totalInvested));
 
+        setTotalInterest(() => currency.format(+FV - +totalInvested));
         setTotalInvested(currency.format(totalInvested));
         setFv(currency.format(FV));
 
         return;
     }
 
-    function formatter(value) {
-        return `${currency.format(value)}`;
+    function formatter(value: number | bigint | undefined) {
+        return `${currency.format(value ? value : 0)}`;
     }
-    
-    const getChangeHandlerWithEvent = (name: any, value: any) => {
+
+    const getChangeHandlerWithEvent = (name: any, value: number) => {
+        console.log({ name, value })
+        console.log('PARSER', value.toString())
         setValue(name, value);
         setInputValue(() => value);
-        console.log({event})
-      };
+    };
 
 
     return (
@@ -65,37 +69,15 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
 
                     <div style={{ flexDirection: 'row' }}>
-                        {/* <input
-                            type="text" {...register("PV")}
-                            style={{ width: '200px' }}
-                            placeholder='PV inicial'
-                        /> */}
-
-                        <Row>
-                            <Col span={12}>
-                                <Slider
-                                    min={1000}
-                                    max={1000000}
-                                    onChange={ (e) => getChangeHandlerWithEvent("PV", e)}
-                                    value={typeof inputValue === 'number' ? inputValue : 0}
-                                    tipFormatter={formatter}
-                                    step={100}
-                                label="teste"
-                                    />
-                            </Col>
-                            <Col span={4}>
-                                <InputNumber
-                                label="teste"
-                                    min={1}
-                                    max={1000000}
-                                    style={{ margin: '0 16px' }}
-                                    value={inputValue}
-                                    onChange={ (e) => getChangeHandlerWithEvent("PV", e)}
-                                    formatter={formatter}
-                                    style={{width: 132}}
-                                />
-                            </Col>
-                        </Row>
+                        <SliderWithInput
+                            formatter={formatter}
+                            inputValue={typeof inputValue === 'number' ? inputValue : Number(0)}
+                            onBlur={(e) => {
+                                getChangeHandlerWithEvent("PV", Number(e.target.value));
+                            }}
+                            onChange={(e) => getChangeHandlerWithEvent("PV", e)}
+                        >Valor presente
+                        </SliderWithInput>
 
 
                         <input
