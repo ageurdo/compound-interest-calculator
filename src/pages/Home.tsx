@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { Slider, InputNumber, Row, Col, Button } from 'antd';
 import { SliderWithInput } from '../components/SliderWithInput';
@@ -22,7 +22,7 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
     const [fv, setFv] = useState('');
     const [totalInvested, setTotalInvested] = useState('');
     const [totalInterest, setTotalInterest] = useState('');
-
+    const formRef = useRef();
     const [inputValue, setInputValue] = useState({
         PV: 0,
         i: 0,
@@ -38,7 +38,7 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
         }
     );
 
-    const onSubmit: SubmitHandler<Props> = (data) => {
+    const submitForm: SubmitHandler<Props> = (data) => {
         FV(data);
     }
 
@@ -88,7 +88,8 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
                 <h3 style={{ marginTop: '-8px', color: '#b3b2bf' }}>Valor futuro</h3>
             </span>
 
-            <form style={{ display: 'flex', flexDirection: 'column' }}>
+            <form ref={formRef} onSubmit={handleSubmit(submitForm)}
+                style={{ display: 'flex', flexDirection: 'column' }}>
 
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
 
@@ -99,10 +100,10 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
                             onBlur={(e) => { getChangeHandlerWithEvent("PV", Number(e.target.value)) }}
                             onChange={(e) => getChangeHandlerWithEvent("PV", e)}
                             minSlider={0}
-                            maxSlider={100000}
+                            maxSlider={10000}
                             minInput={0}
                             maxInput={1000000000}
-                            stepSlider={100}
+                            stepSlider={50}
                             stepInput={10}
                             simbol="R$"
                         >
@@ -166,12 +167,12 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
                 {errors.n && <span>Quantidade de meses é obrigatória</span>}
                 {errors.i && <span>Taxa de juros é obrigatória</span>}
 
-                {/* <input type="submit" style={{ width: '416px' }} /> */}
                 <Button
                     type="primary"
-                    onSubmit={handleSubmit(onSubmit)}
+                    onClick={() => {handleSubmit(submitForm)();}}
                     style={{ backgroundColor: '#322E54', border: 'none', margin: '16px 0 0 0' }}
-                >Calcular</Button>
+                >Calcular
+                </Button>
 
 
             </form>
