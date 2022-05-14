@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
-import { Slider, InputNumber, Row, Col } from 'antd';
+import { Slider, InputNumber, Row, Col, Button } from 'antd';
 import { SliderWithInput } from '../components/SliderWithInput';
 
 type Props = {
@@ -22,8 +22,13 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
     const [fv, setFv] = useState('');
     const [totalInvested, setTotalInvested] = useState('');
     const [totalInterest, setTotalInterest] = useState('');
-    const [object, setObject] = useState([{}])
-    const [inputValue, setInputValue] = useState(0);
+
+    const [inputValue, setInputValue] = useState({
+        PV: 0,
+        i: 0,
+        n: 0,
+        PMT: 0
+    });
 
     const currency = new Intl.NumberFormat(
         'pt-BR',
@@ -54,60 +59,119 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
         return `${currency.format(value ? value : 0)}`;
     }
 
-    const getChangeHandlerWithEvent = (name: any, value: number) => {
-        console.log({ name, value })
-        console.log('PARSER', value.toString())
+    const getChangeHandlerWithEvent = (name: "PV" | "i" | "n" | "PMT", value: number) => {
         setValue(name, value);
-        setInputValue(() => value);
+
+        switch (name) {
+            case "PV":
+                setInputValue((old) => ({ ...old, PV: value }))
+                break;
+            case "i":
+                setInputValue((old) => ({ ...old, i: value }))
+                break;
+            case "n":
+                setInputValue((old) => ({ ...old, n: value }))
+                break;
+            case "PMT":
+                setInputValue((old) => ({ ...old, PMT: value }))
+                break;
+            default:
+                break;
+        }
     };
 
-
     return (
-        <div style={{ display: 'flex', flex: 1, placeContent: 'center', placeItems: 'center', flexDirection: 'column', height: '100vh', backgroundColor: 'lightblue' }}>
-            <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', flex: 1, placeContent: 'center', placeItems: 'center', flexDirection: 'column', height: '100vh', backgroundColor: '#F9FBFC' }}>
+
+            <span style={{ lineHeight: '1.5rem', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                <h1 style={{ textAlign: 'center', lineHeight: '1.5rem' }}>JUROS<br></br>COMPOSTOS</h1>
+                <h3 style={{ marginTop: '-8px', color: '#b3b2bf' }}>Valor futuro</h3>
+            </span>
+
+            <form style={{ display: 'flex', flexDirection: 'column' }}>
 
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
 
                     <div style={{ flexDirection: 'row' }}>
                         <SliderWithInput
-                            formatter={formatter}
-                            inputValue={typeof inputValue === 'number' ? inputValue : Number(0)}
-                            onBlur={(e) => {
-                                getChangeHandlerWithEvent("PV", Number(e.target.value));
-                            }}
+                            tipFormatter={formatter}
+                            inputValue={typeof inputValue.PV === 'number' ? inputValue.PV : Number(0)}
+                            onBlur={(e) => { getChangeHandlerWithEvent("PV", Number(e.target.value)) }}
                             onChange={(e) => getChangeHandlerWithEvent("PV", e)}
-                        >Valor presente
+                            minSlider={0}
+                            maxSlider={100000}
+                            minInput={0}
+                            maxInput={1000000000}
+                            stepSlider={100}
+                            stepInput={10}
+                            simbol="R$"
+                        >
+                            Valor presente
                         </SliderWithInput>
 
+                        <SliderWithInput
+                            tipFormatter={formatter}
+                            inputValue={typeof inputValue.i === 'number' ? inputValue.i : Number(0)}
+                            onBlur={(e) => { getChangeHandlerWithEvent("i", Number(e.target.value)) }}
+                            onChange={(e) => getChangeHandlerWithEvent("i", e)}
+                            minSlider={0}
+                            maxSlider={20}
+                            minInput={0}
+                            maxInput={100}
+                            stepSlider={0.1}
+                            stepInput={0.1}
+                            simbol="%"
+                        >
+                            Taxa de juros
+                        </SliderWithInput>
 
-                        <input
-                            type="text" {...register("i", { required: true })}
-                            style={{ width: '200px' }}
-                            placeholder='Taxa de juros'
-                        />
+                        <SliderWithInput
+                            tipFormatter={formatter}
+                            inputValue={typeof inputValue.PMT === 'number' ? inputValue.PMT : Number(0)}
+                            onBlur={(e) => { getChangeHandlerWithEvent("PMT", Number(e.target.value)) }}
+                            onChange={(e) => getChangeHandlerWithEvent("PMT", e)}
+                            minSlider={0}
+                            maxSlider={5000}
+                            minInput={0}
+                            maxInput={100000}
+                            stepSlider={50}
+                            stepInput={50}
+                            simbol="R$"
+                        >
+                            Aportes mensais
+                        </SliderWithInput>
+
+                        <SliderWithInput
+                            tipFormatter={formatter}
+                            inputValue={typeof inputValue.n === 'number' ? inputValue.n : Number(0)}
+                            onBlur={(e) => { getChangeHandlerWithEvent("n", Number(e.target.value)) }}
+                            onChange={(e) => getChangeHandlerWithEvent("n", e)}
+                            minSlider={0}
+                            maxSlider={240}
+                            minInput={0}
+                            maxInput={1200}
+                            stepSlider={1}
+                            stepInput={1}
+                            simbol=""
+                        >
+                            Número de meses
+                        </SliderWithInput>
+
                     </div>
 
-                    <div style={{ flexDirection: 'row' }}>
 
-                        <input
-                            type="text" {...register("PMT")}
-                            style={{ width: '200px' }}
-                            placeholder='Aporte mensal'
-                        />
-
-                        <input
-                            type="Quantidade de meses" {...register("n", { required: true })}
-                            style={{ width: '200px' }}
-                            placeholder='Quantidade de meses'
-                        />
-                    </div>
 
                 </div>
 
                 {errors.n && <span>Quantidade de meses é obrigatória</span>}
                 {errors.i && <span>Taxa de juros é obrigatória</span>}
 
-                <input type="submit" style={{ width: '416px' }} />
+                {/* <input type="submit" style={{ width: '416px' }} /> */}
+                <Button
+                    type="primary"
+                    onSubmit={handleSubmit(onSubmit)}
+                    style={{ backgroundColor: '#322E54', border: 'none', margin: '16px 0 0 0' }}
+                >Calcular</Button>
 
 
             </form>

@@ -1,54 +1,78 @@
-import { InputNumber, Row, Slider } from 'antd';
+import { Col, InputNumber, Row, Slider } from 'antd';
 import React from 'react'
 
 interface Props {
   onChange: ((value: number) => void) | undefined;
   inputValue: number | undefined;
-  formatter: (value: number | bigint | undefined) => string;
+  tipFormatter?: (value: number | bigint | undefined) => string;
   onBlur: React.FocusEventHandler<HTMLInputElement> | undefined;
-
+  minSlider: number,
+  maxSlider: number,
+  minInput: number,
+  maxInput: number,
+  stepSlider: number,
+  stepInput: number,
+  ariaLabel?: string,
+  simbol: string,
 }
 
 export const SliderWithInput: React.FC<Props> = ({
-  formatter,
+  tipFormatter,
   inputValue,
   onBlur,
   onChange,
-  children
+  children,
+  minInput,
+  maxInput,
+  minSlider,
+  maxSlider,
+  stepSlider,
+  stepInput,
+  ariaLabel,
+  simbol
 }) => {
   return (
     <>
-      <span>
+      <span style={{ color: '#b3b2bf' }}>
         {children}
       </span>
-      < Row >
-        <Slider
-          style={{ flex: 1 }}
-          min={1}
-          max={100000}
-          onChange={onChange}
-          value={inputValue}
-          tipFormatter={formatter}
-          step={100}
-          aria-label="Present value"
-        />
 
-        <div>
-          <span style={{margin: '0 0 0 16px'}}>
-            R$
-          </span>
+      < Col >
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+
+          {/* <span style={{ margin: '0 0 0 16px' }}>
+            {simbol}
+          </span> */}
           <InputNumber
             placeholder='teste'
-            min={1}
-            max={1000000000}
-            style={{ margin: '0 16px', width: "100px" }}
+            min={minInput}
+            max={maxInput}
+            style={{ margin: '0', width: '100%' }}
             value={inputValue}
             onChange={onChange}
             onBlur={onBlur}
             aria-label="Present value"
+            step={stepInput}
+            addonBefore={simbol}
+            size="large"
+          />
+
+          <Slider
+            style={{ margin: '-5px 0 0 0', width: '100%' }}
+            min={minSlider}
+            max={maxSlider}
+            onChange={onChange}
+            value={inputValue}
+            tipFormatter={tipFormatter}
+            step={stepSlider}
+            aria-label={ariaLabel}
+            handleStyle={{ border: '6px solid #A27CCD', backgroundColor: '#fff', width: '18px', height: '18px', marginTop: '-8px' }}
+            trackStyle={{ backgroundColor: "#A27CCD" }}
           />
         </div>
-      </Row >
+
+
+      </Col >
     </>
   )
 }
