@@ -1,5 +1,7 @@
-import { Col, InputNumber, Row, Slider } from 'antd';
 import React from 'react'
+
+import { Col, InputNumber, Row, Slider } from 'antd';
+import "./styles.css";
 
 interface Props {
   onChange: ((value: number) => void) | undefined;
@@ -33,6 +35,7 @@ export const SliderWithInput: React.FC<Props> = ({
 }) => {
   return (
     <>
+  
       <span style={{ color: '#b3b2bf' }}>
         {children}
       </span>
@@ -40,9 +43,6 @@ export const SliderWithInput: React.FC<Props> = ({
       < Col >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
 
-          {/* <span style={{ margin: '0 0 0 16px' }}>
-            {simbol}
-          </span> */}
           <InputNumber
             placeholder='teste'
             min={minInput}
@@ -58,7 +58,7 @@ export const SliderWithInput: React.FC<Props> = ({
           />
 
           <Slider
-            style={{ margin: '-5px 0 0 0', width: '100%' }}
+            style={{ margin: '-5px 0 0 0', width: 'calc(100% - 40px)', placeSelf: 'flex-end' }}
             min={minSlider}
             max={maxSlider}
             onChange={onChange}
