@@ -45,6 +45,8 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
     function FV({ PMT, i, n, PV }: Props) {
 
         let tax = i / 100; //convert to percentage
+        if (!monthly)
+            n = n * 12
         let FV = ((PV * (Math.pow(1 + tax, n)))) + ((PMT * (Math.pow(1 + tax, n) - 1)) / tax);
         let totalInvested = (n * PMT) + +PV;
 
@@ -160,9 +162,10 @@ export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
                             stepSlider={1}
                             stepInput={1}
                             simbol=""
+                            onPressEnter={() => { handleSubmit(submitForm)(); }}
                         >
                             <div onClick={() => changePeriod()}>
-                                <Badge.Ribbon text={monthly ? 'Mês' : 'Ano'} style={{ zIndex: 5, userSelect: 'none' }} color={'#A27CCD'} />
+                                <Badge.Ribbon text={monthly ? 'Mês*' : 'Ano*'} style={{ zIndex: 5, userSelect: 'none' }} color={'#A27CCD'} />
                             </div>
                             Período em
                         </SliderWithInput>

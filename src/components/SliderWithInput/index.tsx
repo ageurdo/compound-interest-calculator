@@ -16,6 +16,7 @@ interface Props {
   stepInput: number,
   ariaLabel?: string,
   simbol: string,
+  onPressEnter?(): void
 }
 
 export const SliderWithInput: React.FC<Props> = ({
@@ -31,7 +32,8 @@ export const SliderWithInput: React.FC<Props> = ({
   stepSlider,
   stepInput,
   ariaLabel,
-  simbol
+  simbol,
+  onPressEnter
 }) => {
   return (
     <>
@@ -55,10 +57,11 @@ export const SliderWithInput: React.FC<Props> = ({
             step={stepInput}
             addonBefore={simbol}
             size="large"
+            onPressEnter={onPressEnter}
           />
 
           <Slider
-            style={{ margin: '-5px 0 0 0', width: 'calc(100% - 40px)', placeSelf: 'flex-end' }}
+            style={{ margin: '-5px 0 0 0', width: 'calc(100% - 40px)', placeSelf: 'flex-end', zIndex: 5 }}
             min={minSlider}
             max={maxSlider}
             onChange={onChange}
