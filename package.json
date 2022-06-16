@@ -5,9 +5,9 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "vite",
-    "predeploy":"yarn build",
+    "predeploy":"yarn run build",
     "deploy":"gh-pages -d build",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && ren dist build",
     "preview": "vite preview"
   },
   "dependencies": {
