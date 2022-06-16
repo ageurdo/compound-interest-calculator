@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && ren dist build",
+    "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
