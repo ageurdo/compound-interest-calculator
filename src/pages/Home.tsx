@@ -10,7 +10,7 @@ type Props = {
     PMT: number,
 };
 
-export const Home: React.FC<Props> = ({ PV, i, n, PMT }) => {
+export const Home: React.FC = () => {
 
     // FV = future value
     // PMT = payment per period
